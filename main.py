@@ -66,7 +66,7 @@ class Chips:
         self.bet = 0
 
     def win_bet(self):
-        self.total += 2 * self.bet
+        self.total += self.bet
 
     def lose_bet(self):
         self.total -= self.bet
@@ -103,6 +103,7 @@ def hit_or_stand(deck, hand):
         if answer.lower() == 'hit':
             hit(deck, hand)
         elif answer.lower() == 'stand':
+            print('Player stands. Dealer is playing.\n')
             playing = False
         else:
             print('Invalid option. (Hit / Stand)\n')
@@ -153,23 +154,6 @@ def dealer_wins(chips):
 def push():
     print("Dealer and Player tie. It's a push.\n")
 
-def new_game():
-    new_game = '#'
-    while new_game[0].lower() not in ('y', 'n'):
-        new_game = input('Would you like to play another hand? [Y/N]: ')
-        if new_game[0].lower() == 'y':
-            playing = True
-            play = True
-            break
-        elif new_game[0].lower(0) == 'n':
-            play = False
-            break
-        else:
-            print('Invalid entry. [Y/N]\n')
-            continue
-    return play
-
-
 if __name__ == '__main__':
 
     # Print an opening statement
@@ -180,6 +164,9 @@ if __name__ == '__main__':
 
     # Print general instructions
     print(f'\nHello {name}!\nYou will be starting with $100. We hope you know the rules to Black Jack.\nEnjoy the game!\n')
+
+    # Initialize player's chips
+    player_chips = Chips()
 
     while True:
         # Create & shuffle the deck
@@ -194,9 +181,6 @@ if __name__ == '__main__':
         for _ in range(2):
             player.add_card(deck.deal())
             dealer.add_card(deck.deal())
-
-        # Initialize player's chips
-        player_chips = Chips()
 
         # Prompt the player for their bet
         take_bet(player_chips)
@@ -238,16 +222,28 @@ if __name__ == '__main__':
                 push()
 
         # Inform the player of his/her current standings
-        print(f'Your current winnings are: {player_chips.total}')
+        print(f'Your current winnings are: {player_chips.total}\n')
 
-        # Ask if the player wants to play again if ou
-        if player_chips.total:
-            new_play = new_game()
-        else:
-            print('You have no money left. Thanks for playing.')
+        # If the player has '0' funds, exit game
+        if player_chips.total == 0:
+            print('You have no funds left. Thanks for playing!')
             break
 
-        if new_play:
+        # Ask if the player wants to play again
+        answer = '#'
+        play_game = False
+        while answer[0].lower() not in ('y', 'n'):
+            answer = input('Do you want to play again? [Y/N]: ')
+            if answer[0].lower() == 'y':
+                play_game = True
+            elif answer[0].lower() == 'n':
+                play_game = False
+            else:
+                print('Invalid Entry. [Y/N]\n')
+
+        if play_game:
+            playing = True
             continue
         else:
+            print('Thanks for playing.\n')
             break
